@@ -1,0 +1,60 @@
+#include <ros/ros.h>
+#include <move_base_msgs/MoveBaseAction.h>
+#include <actionlib/client/simple_action_client.h>
+
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
+int main(int argc, char** argv){
+    ros::init(argc, argv, "pick_objects");
+
+    MoveBaseClient ac("move_base", true);
+
+    while(!ac.waitForServer(ros::Duration(5.0))){
+        ROS_INFO("Waiting for the move_base action server to come up");
+    }
+
+    float pick_up_x, pick_up_y, reach_x, reach_y;
+    ros::NodeHandle n;
+    std::string node_name = ros::this_node::getName();
+    n.getParam(node_name+"/pick_up_x", pick_up_x);
+    n.getParam(node_name+"/pick_up_y", pick_up_y);
+    n.getParam(node_name+"/reach_x", reach_x);
+    n.getParam(node_name+"/reach_y", reach_y);
+
+    move_base_msgs::MoveBaseGoal goal;
+
+    goal.target_pose.header.frame_id = "map";
+    goal.target_pose.header.stamp = ros::Time::now();
+
+    goal.target_pose.pose.position.x = pick_up_x;
+    goal.target_pose.pose.position.y = pick_up_y;
+
+    ROS_INFO("Sending goals");
+    ac.waitForResult();
+
+    if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        ROS_INFO("Moved to pick up position");
+    }else{
+        ROS_INFO("Failed to move to pick up position");
+    }
+
+    ros::Duration(5).sleep();
+
+    goal.target_pose.pose.position.x = reach_x;
+    goal.target_pose.pose.position.y = reach_y;
+
+    ROS_INFO("Sending goals");
+    ac.waitForResult();
+
+    if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        ROS_INFO("Moved to final position");
+    }else{
+        ROS_INFO("Failed to move to final position");
+    }
+
+    return 0;
+}
+
+    

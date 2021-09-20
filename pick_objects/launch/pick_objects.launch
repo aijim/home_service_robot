@@ -1,0 +1,10 @@
+<launch>
+    <node name="pick_objects" type="pick_objects" pkg="pick_objects" output="screen">
+        <rosparam>
+            pick_up_x: 7.0
+            pick_up_y: 2.0
+            reach_x: 7.0
+            reach_y: -3.0
+        </rosparam>
+    </node>
+</launch>
