@@ -13,21 +13,28 @@ int main(int argc, char** argv){
         ROS_INFO("Waiting for the move_base action server to come up");
     }
 
-    float pick_up_x, pick_up_y, reach_x, reach_y;
+    float pick_up_x, pick_up_y, pick_up_w, drop_off_x, drop_off_y, drop_off_w;
     ros::NodeHandle n;
     std::string node_name = ros::this_node::getName();
     n.getParam(node_name+"/pick_up_x", pick_up_x);
     n.getParam(node_name+"/pick_up_y", pick_up_y);
-    n.getParam(node_name+"/reach_x", reach_x);
-    n.getParam(node_name+"/reach_y", reach_y);
+    n.getParam(node_name+"/pick_up_w", pick_up_w);
+    n.getParam(node_name+"/drop_off_x", drop_off_x);
+    n.getParam(node_name+"/drop_off_y", drop_off_y);
+    n.getParam(node_name+"/drop_off_w", drop_off_w);
+     ROS_INFO("%1.2f", pick_up_x);
+ROS_INFO("%1.2f", pick_up_y);
+ROS_INFO("%1.2f", drop_off_x);
+ROS_INFO("%1.2f", drop_off_y);
 
     move_base_msgs::MoveBaseGoal goal;
 
-    goal.target_pose.header.frame_id = "base_link";
+    goal.target_pose.header.frame_id = "map";
     goal.target_pose.header.stamp = ros::Time::now();
 
     goal.target_pose.pose.position.x = pick_up_x;
     goal.target_pose.pose.position.y = pick_up_y;
+    goal.target_pose.pose.orientation.w = pick_up_w;
 
     ROS_INFO("Sending goals");
     ac.sendGoal(goal);
@@ -38,15 +45,32 @@ int main(int argc, char** argv){
     {
         ROS_INFO("Moved to pick up position");
     }else{
+        if(ac.getState() == actionlib::SimpleClientGoalState::PENDING)
+          ROS_INFO("PENDING");
+        else if(ac.getState() == actionlib::SimpleClientGoalState::ACTIVE)
+          ROS_INFO("ACTIVE");
+         else if(ac.getState() == actionlib::SimpleClientGoalState::RECALLED)
+          ROS_INFO("RECALLED");
+        else if(ac.getState() == actionlib::SimpleClientGoalState::REJECTED)
+          ROS_INFO("REJECTED");
+         else if(ac.getState() == actionlib::SimpleClientGoalState::PREEMPTED)
+          ROS_INFO("PREEMPTED");
+         else if(ac.getState() == actionlib::SimpleClientGoalState::ABORTED)
+          ROS_INFO("ABORTED");
+         else if(ac.getState() == actionlib::SimpleClientGoalState::LOST)
+          ROS_INFO("LOST");
         ROS_INFO("Failed to move to pick up position");
     }
 
     ros::Duration(5).sleep();
 
-    goal.target_pose.pose.position.x = reach_x;
-    goal.target_pose.pose.position.y = reach_y;
+    goal.target_pose.pose.position.x = drop_off_x;
+    goal.target_pose.pose.position.y = drop_off_y;
+    goal.target_pose.pose.orientation.w = drop_off_w;
 
     ROS_INFO("Sending goals");
+    ac.sendGoal(goal);
+
     ac.waitForResult();
 
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
