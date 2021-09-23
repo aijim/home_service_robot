@@ -1,0 +1,11 @@
+<launch>
+    <node name="add_markers_test" type="add_markers_test" pkg="add_markers" output="screen">
+        <rosparam>
+            pick_up_x: 1.0
+            pick_up_y: 1.0
+            drop_off_x: -1.0
+            drop_off_y: -1.0
+        </rosparam>
+    </node>
+</launch>
+

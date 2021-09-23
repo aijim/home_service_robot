@@ -14,7 +14,7 @@ public:
 
         marker.header.frame_id = "map";
 
-	marker.ns = "add_markers";
+	marker.ns = "add_markers_test";
 	marker.id = 0;
 
 	marker.type = shape;
@@ -85,38 +85,27 @@ private:
     visualization_msgs::Marker marker;
 };
 
-CubeMarker cube;
-float pick_up_x, pick_up_y, drop_off_x, drop_off_y;
-
-void call_back(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
-{
-    ROS_INFO("[%1.2f, %1.2f]", msg->pose.pose.position.x,msg->pose.pose.position.y);
-    if((msg->pose.pose.position.x < pick_up_x+0.15 && msg->pose.pose.position.x > pick_up_x-0.15) && 
-       (msg->pose.pose.position.y < pick_up_y+0.15 && msg->pose.pose.position.y > pick_up_x-0.15))
-    {
-        cube.delete_marker();
-    }if((msg->pose.pose.position.x > drop_off_x-0.15 && msg->pose.pose.position.x < drop_off_x+0.15) && 
-       (msg->pose.pose.position.y > drop_off_y-0.15 && msg->pose.pose.position.y < drop_off_y+0.15))
-    {
-        cube.add_marker(drop_off_x, drop_off_y);
-    }
-}
-
 int main( int argc, char** argv )
 {
-    ros::init(argc, argv, "add_markers");
+    ros::init(argc, argv, "add_markers_test");
     ros::NodeHandle n;
     ros::Rate r(1);
     marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
 
-    ros::Subscriber acml_sub = n.subscribe("amcl_pose", 10, call_back);
+    //ros::Subscriber acml_sub = n.subscribe("amcl_pose", 10, call_back);
 
+    float pick_up_x, pick_up_y, drop_off_x, drop_off_y;
     std::string node_name = ros::this_node::getName();
     n.getParam(node_name+"/pick_up_x", pick_up_x);
     n.getParam(node_name+"/pick_up_y", pick_up_y);
     n.getParam(node_name+"/drop_off_x", drop_off_x);
     n.getParam(node_name+"/drop_off_y", drop_off_y);
+    ROS_INFO("[%1.2f, %1.2f]", pick_up_x, pick_up_y);
 
+    CubeMarker cube;
     cube.add_marker(pick_up_x, pick_up_y);
-    ros::spin();
+    sleep(5);
+    cube.delete_marker();
+    sleep(5);
+    cube.add_marker(drop_off_x, drop_off_y);
 }

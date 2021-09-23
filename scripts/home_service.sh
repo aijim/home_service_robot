@@ -8,6 +8,6 @@ xterm -e "  export TURTLEBOT_GAZEBO_MAP_FILE=$(rospack find pick_objects)/../map
 sleep 5
 xterm -e "  roslaunch turtlebot_rviz_launchers view_navigation.launch "&
 sleep 5
-xterm -e "  rosrun add_markers add_markers"&
+xterm -e "  roslaunch add_markers add_markers.launch"&
 sleep 5
 xterm -e "  roslaunch pick_objects pick_objects.launch"&

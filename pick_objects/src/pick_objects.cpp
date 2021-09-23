@@ -22,10 +22,6 @@ int main(int argc, char** argv){
     n.getParam(node_name+"/drop_off_x", drop_off_x);
     n.getParam(node_name+"/drop_off_y", drop_off_y);
     n.getParam(node_name+"/drop_off_w", drop_off_w);
-     ROS_INFO("%1.2f", pick_up_x);
-ROS_INFO("%1.2f", pick_up_y);
-ROS_INFO("%1.2f", drop_off_x);
-ROS_INFO("%1.2f", drop_off_y);
 
     move_base_msgs::MoveBaseGoal goal;
 
