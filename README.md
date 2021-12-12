@@ -1,3 +1,6 @@
+![Alt Text](home_service_gazebo.jpg)
+![Alt Text](screen-recorder-sun-dec-12-2021-22-01-07.gif)
+
 # Project 5: Home Service Robot 
 In this project, a home service robot is simulated to pick up a object at pick-up zone and then drop off the object when it reachs drop-off zone. 
 
